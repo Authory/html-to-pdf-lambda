@@ -14,9 +14,10 @@ resource "aws_lambda_function" "html_to_pdf" {
   
   role = aws_iam_role.lamda_role.arn
    
-  image_config {
-    command = ["/usr/local/bin/npx", "aws-lambda-ric", "index.handler"]
-  }
+  # image_config {
+  #   entrypoint = ["/usr/local/bin/npx", "aws-lambda-ric"]
+  #   command = ["index.handler"]
+  # }
 }
 
 resource "aws_iam_role" "lamda_role" {
