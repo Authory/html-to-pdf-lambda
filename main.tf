@@ -87,26 +87,25 @@ resource "aws_security_group" "inbound_sg" {
   }
 }
 
-resource "aws_apigatewayv2_vpc_link" "vpc_link" {
-  name               = "${var.function_name}-link"
-  security_group_ids = [aws_security_group.inbound_sg.id]
-  subnet_ids         = var.subnet_ids
+# resource "aws_apigatewayv2_vpc_link" "vpc_link" {
+#   name               = "${var.function_name}-link"
+#   security_group_ids = [aws_security_group.inbound_sg.id]
+#   subnet_ids         = var.subnet_ids
 
-  tags = {
-    Usage = "example"
-  }
-}
+#   tags = {
+#     Usage = "example"
+#   }
+# }
 
 resource "aws_apigatewayv2_integration" "html_to_pdf" {
   api_id = aws_apigatewayv2_api.lambda.id
 
   integration_uri    = aws_lambda_function.html_to_pdf.invoke_arn
-  integration_type   = "HTTP_PROXY"
+  integration_type   = "AWS_PROXY"
   integration_method = "POST"
 
 
-  connection_type    = "VPC_LINK"
-  connection_id      = aws_apigatewayv2_vpc_link.vpc_link.id
+  connection_type    = "INTERNET"
 }
 
 resource "aws_apigatewayv2_route" "html_to_pdf" {
