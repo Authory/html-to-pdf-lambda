@@ -14,10 +14,9 @@ resource "aws_lambda_function" "html_to_pdf" {
   
   role = aws_iam_role.lamda_role.arn
    
-  # image_config {
-  #   entrypoint = ["/usr/local/bin/npx", "aws-lambda-ric"]
-  #   command = ["index.handler"]
-  # }
+  image_config {
+     command = ["index.handler"]
+  }
 }
 
 resource "aws_iam_role" "lamda_role" {
@@ -87,16 +86,6 @@ resource "aws_security_group" "inbound_sg" {
     security_groups = var.allowed_security_groups
   }
 }
-
-# resource "aws_apigatewayv2_vpc_link" "vpc_link" {
-#   name               = "${var.function_name}-link"
-#   security_group_ids = [aws_security_group.inbound_sg.id]
-#   subnet_ids         = var.subnet_ids
-
-#   tags = {
-#     Usage = "example"
-#   }
-# }
 
 resource "aws_apigatewayv2_integration" "html_to_pdf" {
   api_id = aws_apigatewayv2_api.lambda.id
