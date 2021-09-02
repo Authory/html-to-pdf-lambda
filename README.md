@@ -25,7 +25,7 @@ Response:
 
 ## Deployment using terraform
 
-
+sudo docker push authory/html-to-pdf-lambda 193538901140.dkr.ecr.eu-west-1.amazonaws.com/html-to-pdf-staging-repo
 
 ## Building the image
 
