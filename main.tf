@@ -1,12 +1,16 @@
 ## Lambda Setup
 
+resource "aws_ecr_repository" "html_to_pdf" {
+  name = "${var.function_name}-repo"
+}
+
 resource "aws_lambda_function" "html_to_pdf" {
   function_name = var.function_name
   memory_size                    = "1024"
   timeout                        = "900"
   package_type                   = "Image"
 
-  image_uri = "${var.image_uri}:latest"
+  image_uri = "${aws_ecr_repository.html_to_pdf.repository_url}"
   
   role = aws_iam_role.lamda_role.arn
    

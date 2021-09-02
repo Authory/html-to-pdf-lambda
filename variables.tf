@@ -10,8 +10,3 @@ variable "vpc_id" {
 variable "subnet_ids" {
   type = list(string)
 }
-
-variable "image_uri" {
-  type = string
-  default = "registry.hub.docker.com/authory/html-to-pdf-lambda"
-}
