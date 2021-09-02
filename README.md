@@ -25,7 +25,33 @@ Response:
 
 ## Deployment using terraform
 
-sudo docker push authory/html-to-pdf-lambda 193538901140.dkr.ecr.eu-west-1.amazonaws.com/html-to-pdf-staging-repo
+To utilize this as terraform module, use the following:
+
+```
+module "html_to_pdf_service" {
+  // Module source
+  source = "git@github.com:Authory/html-to-pdf-lambda.git"
+
+  // Your VPC ID
+  vpc_id = var.vpc_id
+  // Your application subnet
+  subnet_ids = var.subnet_ids
+  // Security groups which can access the service.
+  allowed_security_groups = var.allowed_security_groups
+
+  function_name = "html-to-pdf-${var.environment}"
+}
+```
+
+This will create an api gateway and a lambda function linked to your VPC. 
+
+Please note that you will need to upload the image to the ECR registry created by the script:
+
+```
+docker pull authory/html-to-pdf-lambda // or build locally. 
+
+docker push authory/html-to-pdf-lambda XXXXXXXXXX.dkr.ecr.eu-west-1.amazonaws.com/html-to-pdf-XXXXXXXXX-repo
+```
 
 ## Building the image
 
