@@ -1,0 +1,16 @@
+{
+  "name": "html-to-pdf-lambda",
+  "version": "1.0.0",
+  "description": "Convert HTML to PDF Documents. ",
+  "main": "index.js",
+  "repository": "git@github.com:Authory/html-to-pdf-lambda.git",
+  "author": "emanuel@authory.com",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "puppeteer": "^10.2.0",
+    "puppeteer-core": "^10.2.0"
+  },
+  "devDependencies": {
+  }
+}
