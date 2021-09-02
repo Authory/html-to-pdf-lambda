@@ -2,6 +2,8 @@
 
 Small lambda to convert HTML pages into PDFs.
 
+## API
+
 Request/event payload: 
 
 ```
@@ -20,6 +22,10 @@ Response:
   "data": "..." // Pdf Document encoded as base 64.
 }
 ```
+
+## Deployment using terraform
+
+
 
 ## Building the image
 
