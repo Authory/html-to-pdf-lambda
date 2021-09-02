@@ -10,7 +10,7 @@ resource "aws_lambda_function" "html_to_pdf" {
   timeout                        = "900"
   package_type                   = "Image"
 
-  image_uri = "${aws_ecr_repository.html_to_pdf.repository_url}"
+  image_uri = "${aws_ecr_repository.html_to_pdf.repository_url}:latest"
   
   role = aws_iam_role.lamda_role.arn
    
