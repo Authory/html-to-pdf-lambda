@@ -13,5 +13,5 @@ variable "subnet_ids" {
 
 variable "image_uri" {
   type = string
-  default = "authory/html-to-pdf-lambda"
+  default = "registry.hub.docker.com/authory/html-to-pdf-lambda"
 }
