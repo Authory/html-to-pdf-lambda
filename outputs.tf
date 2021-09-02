@@ -10,8 +10,14 @@ output "service_url" {
   value = "${aws_apigatewayv2_stage.lambda.invoke_url}/html-to-pdf"
 }
 
-output "html_to_pdf_lambda_arn" {
+output "lambda_arn" {
   description = "ARN of the created Lambda function."
 
   value = aws_lambda_function.html_to_pdf.arn
+}
+
+output "repository_url" {
+  description = "ECR repository URL for image."
+
+  value = aws_ecr_repository.html_to_pdf.repository_url
 }
