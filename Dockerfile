@@ -51,4 +51,4 @@ COPY --from=build-image ${FUNCTION_DIR} ${FUNCTION_DIR}
 COPY ./index.js ${FUNCTION_DIR}
 
 ENTRYPOINT ["/usr/local/bin/npx", "aws-lambda-ric"]
-CMD ["app.handler"]
+CMD ["index.handler"]
