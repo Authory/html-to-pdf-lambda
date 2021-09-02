@@ -6,7 +6,7 @@ resource "aws_ecr_repository" "html_to_pdf" {
 
 resource "aws_lambda_function" "html_to_pdf" {
   function_name = var.function_name
-  memory_size                    = "1024"
+  memory_size                    = "4096"
   timeout                        = "900"
   package_type                   = "Image"
 

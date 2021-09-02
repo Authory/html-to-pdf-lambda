@@ -1,6 +1,12 @@
 const puppeteer = require('puppeteer');
 
 exports.handler = async (event, context, callback) => {
+
+  if(event.body) {
+    // API Gateway behavior.
+    event = JSON.parse(event.body)
+  }
+
   let result = null;
   let browser = null;
 
