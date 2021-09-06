@@ -1,6 +1,14 @@
 const puppeteer = require('puppeteer');
+const HTML_TO_PDF_SERVICE_TOKEN = process.env.HTML_TO_PDF_SERVICE_TOKEN;
 
 exports.handler = async (event, context, callback) => {
+
+  if(HTML_TO_PDF_SERVICE_TOKEN) {
+    const token = event.headers["Authorization"];
+    if(!token.endsWidth(HTML_TO_PDF_SERVICE_TOKEN)) {
+      return callback(new Error('auth token not valid'))
+    }
+  }
 
   if(event.body) {
     // API Gateway behavior.
