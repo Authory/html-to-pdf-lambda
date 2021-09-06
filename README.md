@@ -1,6 +1,6 @@
 # html-to-pdf-lambda
 
-Small lambda to convert HTML pages into PDFs.
+Small lambda to convert HTML pages into PDFs, uses API Gateway.
 
 ## API
 
@@ -32,14 +32,11 @@ module "html_to_pdf_service" {
   // Module source
   source = "git@github.com:Authory/html-to-pdf-lambda.git"
 
-  // Your VPC ID
-  vpc_id = var.vpc_id
-  // Your application subnet
-  subnet_ids = var.subnet_ids
-  // Security groups which can access the service.
-  allowed_security_groups = var.allowed_security_groups
-
+  // Name of the lambda function to create
   function_name = "html-to-pdf-${var.environment}"
+
+  // Auth token to use (optional). The token needs to be sent in the Authorization header.
+  auth_token = '12345'
 }
 ```
 
@@ -82,5 +79,5 @@ sudo docker run  -v ~/.aws-lambda-rie:/aws-lambda -p 9000:8080 \
 Invoking the container locally and storing the PDF: 
 
 ```
-curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{ "html": "<h1>Hello</h1>"}' | jq -r .data | base64 -d > test.pdf
+curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{ "body": " { \"html\": \"<h1>Test</h1>\" }" }' | jq -r ".body.data" | base64 -d > test.pdf
 ```

@@ -17,6 +17,12 @@ resource "aws_lambda_function" "html_to_pdf" {
   image_config {
      command = ["index.handler"]
   }
+
+  environment {
+    variables = {
+      HTML_TO_PDF_SERVICE_TOKEN = var.auth_token
+    }
+  }
 }
 
 resource "aws_iam_role" "lamda_role" {
@@ -70,20 +76,6 @@ resource "aws_apigatewayv2_stage" "lambda" {
       integrationErrorMessage = "$context.integrationErrorMessage"
       }
     )
-  }
-}
-
-
-resource "aws_security_group" "inbound_sg" {
-  name        = "${var.function_name}-inbound-sg"
-  description = "Allow inbound traffic to ${var.function_name} API gateway"
-  vpc_id      = var.vpc_id
-
-  ingress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    security_groups = var.allowed_security_groups
   }
 }
 
