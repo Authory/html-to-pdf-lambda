@@ -5,8 +5,13 @@ exports.handler = async (event, context, callback) => {
 
   if(HTML_TO_PDF_SERVICE_TOKEN) {
     const token = event.headers["Authorization"];
-    if(!token.endsWidth(HTML_TO_PDF_SERVICE_TOKEN)) {
-      return callback(new Error('auth token not valid'))
+    if(HTML_TO_PDF_SERVICE_TOKEN === token) {
+      return callback(null, {
+        statusCode: 403,
+        body: "Authorization Required.",
+        headers: { },
+        isBase64Encoded: false
+      });
     }
   }
 

@@ -1,6 +1,8 @@
 # html-to-pdf-lambda
 
-Small lambda to convert HTML pages into PDFs, uses API Gateway.
+Small lambda to convert HTML pages into PDFs, exposed via API Gateway.
+
+Includes a terraform module.
 
 ## API
 
@@ -40,15 +42,17 @@ module "html_to_pdf_service" {
 }
 ```
 
-This will create an api gateway and a lambda function linked to your VPC. 
+This will create an api gateway and a lambda function linked.
 
-Please note that you will need to upload the image to the ECR registry created by the script:
+Please note that you will need to upload the image to the ECR registry created by the docker file:
 
 ```
 docker pull authory/html-to-pdf-lambda // or build locally. 
 
 docker push authory/html-to-pdf-lambda XXXXXXXXXX.dkr.ecr.eu-west-1.amazonaws.com/html-to-pdf-XXXXXXXXX-repo
 ```
+
+This is because AWS Lambda can not pull images from dockerhub.
 
 ## Building the image
 
