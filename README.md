@@ -6,7 +6,7 @@ Includes a terraform module.
 
 ## API
 
-Request/event payload: 
+Request/event payload:
 
 ```
 {
@@ -17,7 +17,7 @@ Request/event payload:
 }
 ```
 
-Response: 
+Response:
 
 ```
 {
@@ -47,7 +47,7 @@ This will create an api gateway and a lambda function linked.
 Please note that you will need to upload the image to the ECR registry created by the docker file:
 
 ```
-docker pull authory/html-to-pdf-lambda // or build locally. 
+docker pull authory/html-to-pdf-lambda // or build locally.
 
 docker push authory/html-to-pdf-lambda XXXXXXXXXX.dkr.ecr.eu-west-1.amazonaws.com/html-to-pdf-XXXXXXXXX-repo
 ```
@@ -80,8 +80,8 @@ sudo docker run  -v ~/.aws-lambda-rie:/aws-lambda -p 9000:8080 \
   /usr/local/bin/npx aws-lambda-ric index.handler
 ```
 
-Invoking the container locally and storing the PDF: 
+Invoking the container locally and storing the PDF:
 
 ```
-curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{ "body": " { \"html\": \"<h1>Test</h1>\" }" }' | jq -r ".body.data" | base64 -d > test.pdf
+curl -H "Content-Type: application/json" -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{ "body": " { \"html\": \"<h1>Test</h1>\" }" }' | jq -r ".body.data" | base64 -d > test.pdf
 ```
