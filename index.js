@@ -5,7 +5,7 @@ exports.handler = async (event, context, callback) => {
 
   if(HTML_TO_PDF_SERVICE_TOKEN) {
     const token = event.headers["Authorization"];
-    if(HTML_TO_PDF_SERVICE_TOKEN === token) {
+    if(!token.endsWith(HTML_TO_PDF_SERVICE_TOKEN)) {
       return callback(null, {
         statusCode: 403,
         body: "Authorization Required.",
