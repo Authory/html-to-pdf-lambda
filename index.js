@@ -4,8 +4,8 @@ const HTML_TO_PDF_SERVICE_TOKEN = process.env.HTML_TO_PDF_SERVICE_TOKEN;
 exports.handler = async (event, context, callback) => {
 
   if(HTML_TO_PDF_SERVICE_TOKEN) {
-    const token = event.headers["Authorization"];
-    if(!token.endsWith(HTML_TO_PDF_SERVICE_TOKEN)) {
+    const token = event.headers["authorization"] || event.headers["Authorization"];
+    if(!token || !token.endsWith(HTML_TO_PDF_SERVICE_TOKEN)) {
       return callback(null, {
         statusCode: 403,
         body: "Authorization Required.",
