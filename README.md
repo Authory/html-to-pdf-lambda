@@ -65,7 +65,7 @@ docker build -t authory/html-to-pdf-lambda .
 Build the image
 
 ```
-  docker build -t authory/html-to-pdf-lambda .
+docker build -t authory/html-to-pdf-lambda .
 ```
 
 Run the image
