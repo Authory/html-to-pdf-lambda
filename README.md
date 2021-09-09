@@ -62,26 +62,20 @@ docker build -t authory/html-to-pdf-lambda .
 
 ## Running locally
 
-To run locally, use aws-lambda-rie, as [outlined here](https://github.com/aws/aws-lambda-nodejs-runtime-interface-client#local-testing).
-
-This downloads aws-lambda-rie to your home directory.
+Build the image
 
 ```
-mkdir -p .aws-lambda-rie && \
-    curl -Lo ~/.aws-lambda-rie/aws-lambda-rie https://github.com/aws/aws-lambda-runtime-interface-emulator/releases/latest/download/aws-lambda-rie && \
-    chmod +x ~/.aws-lambda-rie/aws-lambda-rie
+  docker build -t authory/html-to-pdf-lambda .
 ```
 
-This includes it in the container.
+Run the image
 
 ```
-sudo docker run  -v ~/.aws-lambda-rie:/aws-lambda -p 9000:8080 \
-  --entrypoint /aws-lambda/aws-lambda-rie authory/html-to-pdf-lambda \
-  /usr/local/bin/npx aws-lambda-ric index.handler
+docker run -p 9000:8080 authory/html-to-pdf-lambda
 ```
 
 Invoking the container locally and storing the PDF:
 
 ```
-curl -H "Content-Type: application/json" -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{ "body": " { \"html\": \"<h1>Test</h1>\" }" }' | jq -r ".body.data" | base64 -d > test.pdf
+curl -H "Content-Type: application/json" -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{ "body": " { \"html\": \"<h1>Test</h1>\" }" }' | jq -r ".body"  | jq -r ".data"  | base64 -d > test.pdf
 ```
