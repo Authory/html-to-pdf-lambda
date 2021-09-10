@@ -68,6 +68,7 @@ resource "aws_iam_policy" "s3_pdf_policy" {
       {
         Action = [
           "s3:PutObject",
+          "s3:PutObjectAcl",
         ]
         Effect   = "Allow"
         Resource =  aws_s3_bucket.pdf_bucket.arn
