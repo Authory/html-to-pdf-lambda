@@ -4,12 +4,8 @@ resource "aws_ecr_repository" "html_to_pdf" {
   name = "${var.function_name}-repo"
 }
 
-locals {
-  pdf_exports_bucket_public_name = "pdf-exports-${var.environment}-bucket"
-}
-
-resource "aws_s3_bucket" "pdf-bucket" {
-  bucket = local.pdf_exports_bucket_public_name
+resource "aws_s3_bucket" "pdf_bucket" {
+  bucket = var.function_name
 
   dynamic "lifecycle_rule" {
     content {
@@ -40,7 +36,7 @@ resource "aws_lambda_function" "html_to_pdf" {
   environment {
     variables = {
       HTML_TO_PDF_SERVICE_TOKEN = var.auth_token
-      PDF_BUCKET_NAME = local.pdf_exports_bucket_public_name
+      PDF_BUCKET_NAME = aws_s3_bucket.pdf_bucket.name
     }
   }
 }
@@ -75,7 +71,7 @@ resource "aws_iam_policy" "s3-pdf-policy" {
           "s3:PutObject",
         ]
         Effect   = "Allow"
-        Resource = "*"
+        Resource =  aws_s3_bucket.pdf_bucket.name
       },
     ]
   })
