@@ -41,7 +41,7 @@ resource "aws_lambda_function" "html_to_pdf" {
 }
 
 resource "aws_iam_role" "lamda_role" {
-  name = "${var.function_name}_role"
+  name = "${var.function_name}-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -58,7 +58,7 @@ resource "aws_iam_role" "lamda_role" {
 }
 
 resource "aws_iam_policy" "s3_pdf_policy" {
-  name        = "pdf_upload_policy"
+  name        = "${var.function_name}-policy"
   path        = "/"
   description = "Upload PDF policy"
 
