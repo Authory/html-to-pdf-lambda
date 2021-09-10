@@ -4,6 +4,25 @@ resource "aws_ecr_repository" "html_to_pdf" {
   name = "${var.function_name}-repo"
 }
 
+locals {
+  pdf_exports_bucket_public_name = "pdf-exports-${var.environment}-bucket"
+}
+
+resource "aws_s3_bucket" "pdf-bucket" {
+  bucket = local.pdf_exports_bucket_public_name
+
+  dynamic "lifecycle_rule" {
+    content {
+      id      = "autoremove"
+      enabled = true
+
+      expiration {
+        days = 2
+      }
+    }
+  }
+}
+
 resource "aws_lambda_function" "html_to_pdf" {
   function_name = var.function_name
   memory_size                    = "4096"
@@ -21,6 +40,7 @@ resource "aws_lambda_function" "html_to_pdf" {
   environment {
     variables = {
       HTML_TO_PDF_SERVICE_TOKEN = var.auth_token
+      PDF_BUCKET_NAME = local.pdf_exports_bucket_public_name
     }
   }
 }
@@ -42,9 +62,33 @@ resource "aws_iam_role" "lamda_role" {
   })
 }
 
+resource "aws_iam_policy" "s3-pdf-policy" {
+  name        = "pdf_upload_policy"
+  path        = "/"
+  description = "Upload PDF policy"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "s3:PutObject",
+        ]
+        Effect   = "Allow"
+        Resource = "*"
+      },
+    ]
+  })
+}
+
 resource "aws_iam_role_policy_attachment" "lambda_policy" {
   role       = aws_iam_role.lamda_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_s3_policy" {
+  role       = aws_iam_role.lamda_role.name
+  policy_arn = aws_iam_policy.s3-pdf-policy.arn
 }
 
 ## Gateway Setup

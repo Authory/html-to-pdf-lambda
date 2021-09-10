@@ -1,5 +1,7 @@
 const chromium = require('chrome-aws-lambda');
+const AWS = require('aws-sdk');
 const HTML_TO_PDF_SERVICE_TOKEN = process.env.HTML_TO_PDF_SERVICE_TOKEN;
+const PDF_BUCKET_NAME = process.env.PDF_BUCKET_NAME;
 
 exports.handler = async (event, context, callback) => {
 
@@ -22,6 +24,7 @@ exports.handler = async (event, context, callback) => {
 
   let result = null;
   let browser = null;
+  let fileName = null;
 
   let options = {
     format: event.format || "A4",
@@ -69,6 +72,18 @@ exports.handler = async (event, context, callback) => {
 
     result = await page.pdf(options);
 
+    const s3 = new AWS.S3();
+
+    fileName = `${(Math.random() + 1).toString(36).substring(2)}/my-article.pdf`;
+
+    await s3.putObject( {
+      Bucket: PDF_BUCKET_NAME,
+      Key: fileName,
+      ContentType: "application/pdf",
+      Body: result,
+      ACL: 'public-read'
+    });
+
     if (browser !== null) {
       console.log('Closing Browser.')
       await browser.close();
@@ -94,7 +109,7 @@ exports.handler = async (event, context, callback) => {
   return callback(null, {
     statusCode: 200,
     body: JSON.stringify({
-      data: result.toString('base64')
+      data: `https://${PDF_BUCKET_NAME}.s3.amazonaws.com/${fileName}.pdf`
     }),
     headers: {
       "Content-Type": "application/json"
