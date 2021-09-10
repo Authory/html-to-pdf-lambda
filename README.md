@@ -71,11 +71,11 @@ docker build -t authory/html-to-pdf-lambda .
 Run the image
 
 ```
-docker run -p 9000:8080 authory/html-to-pdf-lambda
+docker run -e PDF_BUCKET_NAME="<BUCKET_NAME>" -e AWS_ACCESS_KEY_ID="<KEY_ID>" -e AWS_SECRET_ACCESS_KEY="<ACCESS_KEY>" -p 9000:8080 authory/html-to-pdf-lambda
 ```
 
 Invoking the container locally and storing the PDF:
 
 ```
-curl -H "Content-Type: application/json" -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{ "body": " { \"html\": \"<h1>Test</h1>\" }" }' | jq -r ".body"  | jq -r ".data"  | base64 -d > test.pdf
+curl -H "Content-Type: application/json" -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{ "body": " { \"html\": \"<h1>Test</h1>\", \"fileName\" : \"foobar\" }" }' | jq -r ".body"  | jq ".data"
 ```

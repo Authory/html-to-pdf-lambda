@@ -40,6 +40,9 @@ exports.handler = async (event, context, callback) => {
     return callback(new Error('html is a required parameter'))
   }
 
+  if(!event.fileName) {
+    return callback(new Error('fileName is a required parameter'))
+  }
   
   try {
 
@@ -74,15 +77,30 @@ exports.handler = async (event, context, callback) => {
 
     const s3 = new AWS.S3();
 
-    fileName = `${(Math.random() + 1).toString(36).substring(2)}/my-article.pdf`;
+    fileName = `${(Math.random() + 1).toString(36).substring(2)}/${event.fileName}.pdf`;
 
-    await s3.putObject( {
-      Bucket: PDF_BUCKET_NAME,
-      Key: fileName,
-      ContentType: "application/pdf",
-      Body: result,
-      ACL: 'public-read'
-    });
+    console.log(`Uploading to s3 bucket ${PDF_BUCKET_NAME} as ${fileName}`);
+
+    const uploadRes = await new Promise((resolve, reject) =>
+      s3.putObject( {
+        Bucket: PDF_BUCKET_NAME,
+        Key: fileName,
+        ContentType: "application/pdf",
+        Body: result,
+        ACL: 'public-read'
+      },
+      (error, data) => {
+        if (error) {
+          console.log('Upload failed', error);
+          reject(error)
+        } else {
+          console.log('Upload complete');
+          resolve(data)
+        }
+      })
+    )
+
+    console.log("uploadRes", uploadRes); 
 
     if (browser !== null) {
       console.log('Closing Browser.')
@@ -109,7 +127,7 @@ exports.handler = async (event, context, callback) => {
   return callback(null, {
     statusCode: 200,
     body: JSON.stringify({
-      data: `https://${PDF_BUCKET_NAME}.s3.amazonaws.com/${fileName}.pdf`
+      data: `https://${PDF_BUCKET_NAME}.s3.amazonaws.com/${fileName}`
     }),
     headers: {
       "Content-Type": "application/json"
