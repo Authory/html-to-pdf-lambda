@@ -6,7 +6,7 @@ resource "aws_ecr_repository" "html_to_pdf" {
 
 resource "aws_s3_bucket" "pdf_bucket" {
   bucket = var.function_name
-  acl    = "public"
+  acl    = "public-read"
 
   lifecycle_rule {
     id      = "autoremove"
@@ -83,7 +83,7 @@ resource "aws_iam_role_policy_attachment" "lambda_policy" {
 
 resource "aws_iam_role_policy_attachment" "lambda_s3_policy" {
   role       = aws_iam_role.lamda_role.name
-  policy_arn = aws_iam_policy.s3-pdf-policy.arn
+  policy_arn = aws_iam_policy.s3_pdf_policy.arn
 }
 
 ## Gateway Setup
