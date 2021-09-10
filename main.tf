@@ -6,6 +6,7 @@ resource "aws_ecr_repository" "html_to_pdf" {
 
 resource "aws_s3_bucket" "pdf_bucket" {
   bucket = var.function_name
+  acl    = "public"
 
   lifecycle_rule {
     id      = "autoremove"
@@ -34,7 +35,7 @@ resource "aws_lambda_function" "html_to_pdf" {
   environment {
     variables = {
       HTML_TO_PDF_SERVICE_TOKEN = var.auth_token
-      PDF_BUCKET_NAME = aws_s3_bucket.pdf_bucket.name
+      PDF_BUCKET_NAME = aws_s3_bucket.pdf_bucket.id
     }
   }
 }
@@ -56,7 +57,7 @@ resource "aws_iam_role" "lamda_role" {
   })
 }
 
-resource "aws_iam_policy" "s3-pdf-policy" {
+resource "aws_iam_policy" "s3_pdf_policy" {
   name        = "pdf_upload_policy"
   path        = "/"
   description = "Upload PDF policy"
@@ -69,7 +70,7 @@ resource "aws_iam_policy" "s3-pdf-policy" {
           "s3:PutObject",
         ]
         Effect   = "Allow"
-        Resource =  aws_s3_bucket.pdf_bucket.name
+        Resource =  aws_s3_bucket.pdf_bucket.id
       },
     ]
   })
