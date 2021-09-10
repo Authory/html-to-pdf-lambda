@@ -70,7 +70,7 @@ resource "aws_iam_policy" "s3_pdf_policy" {
           "s3:PutObject",
         ]
         Effect   = "Allow"
-        Resource =  aws_s3_bucket.pdf_bucket.id
+        Resource =  aws_s3_bucket.pdf_bucket.arn
       },
     ]
   })
