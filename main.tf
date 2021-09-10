@@ -7,7 +7,7 @@ resource "aws_ecr_repository" "html_to_pdf" {
 resource "aws_s3_bucket" "pdf_bucket" {
   bucket = var.function_name
 
-  dynamic "lifecycle_rule" {
+  lifecycle_rule {
     content {
       id      = "autoremove"
       enabled = true
