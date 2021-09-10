@@ -8,13 +8,11 @@ resource "aws_s3_bucket" "pdf_bucket" {
   bucket = var.function_name
 
   lifecycle_rule {
-    content {
-      id      = "autoremove"
-      enabled = true
+    id      = "autoremove"
+    enabled = true
 
-      expiration {
-        days = 2
-      }
+    expiration {
+      days = 2
     }
   }
 }
