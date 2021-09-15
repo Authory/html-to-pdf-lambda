@@ -127,7 +127,7 @@ exports.handler = async (event, context, callback) => {
   return callback(null, {
     statusCode: 200,
     body: JSON.stringify({
-      data: `https://${PDF_BUCKET_NAME}.s3.amazonaws.com/${fileName}`
+      data: `https://${PDF_BUCKET_NAME}.s3.eu-west-1.amazonaws.com/${fileName}`
     }),
     headers: {
       "Content-Type": "application/json"
