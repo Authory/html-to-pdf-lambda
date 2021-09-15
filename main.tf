@@ -36,6 +36,7 @@ resource "aws_lambda_function" "html_to_pdf" {
     variables = {
       HTML_TO_PDF_SERVICE_TOKEN = var.auth_token
       PDF_BUCKET_NAME = aws_s3_bucket.pdf_bucket.id
+      PDF_BUCKET_DOMAIN = aws_s3_bucket.pdf_bucket.bucket_regional_domain_name
     }
   }
 }
