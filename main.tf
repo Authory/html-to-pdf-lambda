@@ -74,8 +74,7 @@ resource "aws_iam_policy" "s3_pdf_policy" {
         "Resource" = [
           "${aws_s3_bucket.pdf_bucket.arn}",
           "${aws_s3_bucket.pdf_bucket.arn}/*"
-        ],
-        Principal = "*"
+        ]
       },
     ]
   })
