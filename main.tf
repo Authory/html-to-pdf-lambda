@@ -6,16 +6,27 @@ resource "aws_ecr_repository" "html_to_pdf" {
 
 resource "aws_s3_bucket" "pdf_bucket" {
   bucket = var.function_name
-  acl    = "public-read"
+}
 
-  lifecycle_rule {
-    id      = "autoremove"
-    enabled = true
+resource "aws_s3_bucket_lifecycle_configuration" "auto_prune_bucket" {
+  bucket = aws_s3_bucket.pdf_bucket.bucket
+
+  rule {
+    id = "auto_prune_bucket"
+
+    filter {}
 
     expiration {
       days = 2
     }
+
+    status = "Enabled"
   }
+}
+
+resource "aws_s3_bucket_acl" "allow_public_read" {
+  bucket = aws_s3_bucket.pdf_bucket.id
+  acl    = "public-read"
 }
 
 resource "aws_lambda_function" "html_to_pdf" {
