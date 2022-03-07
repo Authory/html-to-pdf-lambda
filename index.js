@@ -2,6 +2,7 @@ const chromium = require('chrome-aws-lambda');
 const AWS = require('aws-sdk');
 const HTML_TO_PDF_SERVICE_TOKEN = process.env.HTML_TO_PDF_SERVICE_TOKEN;
 const PDF_BUCKET_NAME = process.env.PDF_BUCKET_NAME;
+const PDF_BUCKET_DOMAIN = process.env.PDF_BUCKET_DOMAIN;
 
 exports.handler = async (event, context, callback) => {
 
@@ -127,7 +128,7 @@ exports.handler = async (event, context, callback) => {
   return callback(null, {
     statusCode: 200,
     body: JSON.stringify({
-      data: `https://${PDF_BUCKET_NAME}.s3.eu-west-1.amazonaws.com/${fileName}`
+      data: `${PDF_BUCKET_DOMAIN}/${fileName}`
     }),
     headers: {
       "Content-Type": "application/json"
