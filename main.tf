@@ -31,8 +31,10 @@ resource "aws_s3_bucket_acl" "allow_public_read" {
 
 resource "aws_lambda_function" "html_to_pdf" {
   function_name = var.function_name
-  memory_size                    = "4096"
-  timeout                        = "900"
+  // If the account is new, its not possible to allocate more memory.
+  memory_size                    = "3008"
+  // API Gateway maximum request time is 29 seconds.
+  timeout                        = "29"
   package_type                   = "Image"
 
   image_uri = "${aws_ecr_repository.html_to_pdf.repository_url}:latest"
@@ -60,7 +62,6 @@ resource "aws_iam_role" "lamda_role" {
     Statement = [{
       Action = "sts:AssumeRole"
       Effect = "Allow"
-      Sid    = ""
       Principal = {
         Service = "lambda.amazonaws.com"
       }
