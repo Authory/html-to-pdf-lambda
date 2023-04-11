@@ -6,19 +6,19 @@ const PDF_BUCKET_DOMAIN = process.env.PDF_BUCKET_DOMAIN;
 
 exports.handler = async (event, context, callback) => {
 
-  if(HTML_TO_PDF_SERVICE_TOKEN) {
+  if (HTML_TO_PDF_SERVICE_TOKEN) {
     const token = event.headers["authorization"] || event.headers["Authorization"];
-    if(!token || !token.endsWith(HTML_TO_PDF_SERVICE_TOKEN)) {
+    if (!token || !token.endsWith(HTML_TO_PDF_SERVICE_TOKEN)) {
       return callback(null, {
         statusCode: 403,
         body: "Authorization Required.",
-        headers: { },
+        headers: {},
         isBase64Encoded: false
       });
     }
   }
 
-  if(event.body) {
+  if (event.body) {
     // Parse body from API gateway.
     event = JSON.parse(event.body)
   }
@@ -30,26 +30,29 @@ exports.handler = async (event, context, callback) => {
   let options = {
     format: event.format || "A4",
     printBackground: event.format || false,
-    margin: event.margin || { top: "1in", 
-      right: "1in", 
+    margin: event.margin || {
+      top: "1in",
+      right: "1in",
       bottom: "1in",
       left: "1in"
     },
   }
 
-  if(!event.html) {
-    return callback(new Error('html is a required parameter'))
+  console.log("=====EVENT", event);
+
+  if (!event.html && !event.url) {
+    return callback(new Error('html or url is a required parameter'))
   }
 
-  if(!event.fileName) {
+  if (!event.fileName) {
     return callback(new Error('fileName is a required parameter'))
   }
-  
+
   try {
 
     console.log('Starting browser.')
 
-    browser =  await chromium.puppeteer.launch({
+    browser = await chromium.puppeteer.launch({
       args: chromium.args,
       defaultViewport: chromium.defaultViewport,
       headless: true,
@@ -69,7 +72,12 @@ exports.handler = async (event, context, callback) => {
 
     console.log('Loading content.')
 
-    await page.setContent(event.html);
+    if (event.html) {
+      await page.setContent(event.html);
+    } else if (event.url) {
+      await page.goto(event.url)
+    }
+
     await loaded;
 
     console.log('Rendering PDF.')
@@ -83,25 +91,25 @@ exports.handler = async (event, context, callback) => {
     console.log(`Uploading to s3 bucket ${PDF_BUCKET_NAME} as ${fileName}`);
 
     const uploadRes = await new Promise((resolve, reject) =>
-      s3.putObject( {
+      s3.putObject({
         Bucket: PDF_BUCKET_NAME,
         Key: fileName,
         ContentType: "application/pdf",
         Body: result,
         ACL: 'public-read'
       },
-      (error, data) => {
-        if (error) {
-          console.log('Upload failed', error);
-          reject(error)
-        } else {
-          console.log('Upload complete');
-          resolve(data)
-        }
-      })
+        (error, data) => {
+          if (error) {
+            console.log('Upload failed', error);
+            reject(error)
+          } else {
+            console.log('Upload complete');
+            resolve(data)
+          }
+        })
     )
 
-    console.log("uploadRes", uploadRes); 
+    console.log("uploadRes", uploadRes);
 
     if (browser !== null) {
       console.log('Closing Browser.')
