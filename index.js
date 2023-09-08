@@ -69,8 +69,7 @@ exports.handler = async (event, context, callback) => {
     if (event.viewportWidth && event.viewportHeight) {
       await page.setViewport({
         width: parseInt(event.viewportWidth),
-        height: parseInt(event.viewPortHeight),
-        deviceScaleFactor: 1,
+        height: parseInt(event.viewportHeight)
       });
     }
 
@@ -103,7 +102,7 @@ exports.handler = async (event, context, callback) => {
 
     const s3 = new AWS.S3();
 
-    fileName = `${(Math.random() + 1).toString(36).substring(2)}/${event.fileName}.pdf`;
+    fileName = `${(Math.random() + 1).toString(36).substring(2)}/${event.fileName}.${event.renderScreenshot ? "png" : "pdf"}`;
 
     console.log(`Uploading to s3 bucket ${PDF_BUCKET_NAME} as ${fileName}`);
 
@@ -111,7 +110,7 @@ exports.handler = async (event, context, callback) => {
       s3.putObject({
         Bucket: PDF_BUCKET_NAME,
         Key: fileName,
-        ContentType: "application/pdf",
+        ContentType: event.renderScreenshot ? "image/png" : "application/pdf",
         Body: result,
         ACL: 'public-read'
       },
