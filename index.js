@@ -66,6 +66,14 @@ exports.handler = async (event, context, callback) => {
 
     const page = await browser.newPage();
 
+    if (event.viewportWidth && event.viewportHeight) {
+      await page.setViewport({
+        width: parseInt(event.viewportWidth),
+        height: parseInt(event.viewPortHeight),
+        deviceScaleFactor: 1,
+      });
+    }
+
     const loaded = page.waitForNavigation({
       waitUntil: "load",
     });
@@ -80,9 +88,18 @@ exports.handler = async (event, context, callback) => {
 
     await loaded;
 
-    console.log('Rendering PDF.')
+    if (event.renderScreenshot) {
+      console.log('Rendering screenshot.')
 
-    result = await page.pdf(options);
+      result = await page.screenshot({
+        "type": "png", // can also be "jpeg" or "webp" (recommended)
+        "fullPage": true,  // will scroll down to capture everything if true
+      });
+
+    } else {
+      console.log('Rendering PDF.')
+      result = await page.pdf(options);
+    }
 
     const s3 = new AWS.S3();
 
