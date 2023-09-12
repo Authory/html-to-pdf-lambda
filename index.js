@@ -1,5 +1,6 @@
 const chromium = require('chrome-aws-lambda');
 const AWS = require('aws-sdk');
+const sizeOf = require('buffer-image-size');
 const HTML_TO_PDF_SERVICE_TOKEN = process.env.HTML_TO_PDF_SERVICE_TOKEN;
 const PDF_BUCKET_NAME = process.env.PDF_BUCKET_NAME;
 const PDF_BUCKET_DOMAIN = process.env.PDF_BUCKET_DOMAIN;
@@ -26,6 +27,7 @@ exports.handler = async (event, context, callback) => {
   let result = null;
   let browser = null;
   let fileName = null;
+  let dimensions = undefined;
 
   let options = {
     format: event.format || "A4",
@@ -69,7 +71,8 @@ exports.handler = async (event, context, callback) => {
     if (event.viewportWidth && event.viewportHeight) {
       await page.setViewport({
         width: parseInt(event.viewportWidth),
-        height: parseInt(event.viewportHeight)
+        height: parseInt(event.viewportHeight),
+        deviceScaleFactor: 1
       });
     }
 
@@ -94,6 +97,8 @@ exports.handler = async (event, context, callback) => {
         "type": "png", // can also be "jpeg" or "webp" (recommended)
         "fullPage": true,  // will scroll down to capture everything if true
       });
+
+      dimensions = sizeOf(result);
 
     } else {
       console.log('Rendering PDF.')
@@ -152,7 +157,8 @@ exports.handler = async (event, context, callback) => {
   return callback(null, {
     statusCode: 200,
     body: JSON.stringify({
-      data: `${PDF_BUCKET_DOMAIN}/${fileName}`
+      data: `${PDF_BUCKET_DOMAIN}/${fileName}`,
+      dimensions
     }),
     headers: {
       "Content-Type": "application/json"
