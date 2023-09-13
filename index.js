@@ -72,7 +72,7 @@ exports.handler = async (event, context, callback) => {
       await page.setViewport({
         width: parseInt(event.viewportWidth),
         height: parseInt(event.viewportHeight),
-        deviceScaleFactor: 1
+        deviceScaleFactor: 2
       });
     }
 
