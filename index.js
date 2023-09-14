@@ -93,6 +93,8 @@ exports.handler = async (event, context, callback) => {
     if (event.renderScreenshot) {
       console.log('Rendering screenshot.')
 
+      await page.addStyleTag({ content: 'html, body {padding: 0; margin: 0;}' });
+
       result = await page.screenshot({
         "type": "png", // can also be "jpeg" or "webp" (recommended)
         "fullPage": true,  // will scroll down to capture everything if true
