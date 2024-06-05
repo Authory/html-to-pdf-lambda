@@ -29,27 +29,34 @@ resource "aws_s3_bucket_acl" "allow_public_read" {
   acl    = "public-read"
 }
 
+resource "aws_cloudwatch_log_group" "lambda_log" {
+  name              = "/aws/lambda/${var.function_name}"
+  retention_in_days = 60
+}
+
 resource "aws_lambda_function" "html_to_pdf" {
+
+  depends_on    = [aws_cloudwatch_log_group.lambda_log]
   function_name = var.function_name
   // If the account is new, its not possible to allocate more memory.
-  memory_size                    = "3008"
+  memory_size = "3008"
   // API Gateway maximum request time is 29 seconds.
-  timeout                        = "29"
-  package_type                   = "Image"
+  timeout      = "29"
+  package_type = "Image"
 
   image_uri = "${aws_ecr_repository.html_to_pdf.repository_url}:latest"
-  
+
   role = aws_iam_role.lamda_role.arn
-   
+
   image_config {
-     command = ["index.handler"]
+    command = ["index.handler"]
   }
 
   environment {
     variables = {
       HTML_TO_PDF_SERVICE_TOKEN = var.auth_token
-      PDF_BUCKET_NAME = aws_s3_bucket.pdf_bucket.id
-      PDF_BUCKET_DOMAIN = aws_s3_bucket.pdf_bucket.bucket_regional_domain_name
+      PDF_BUCKET_NAME           = aws_s3_bucket.pdf_bucket.id
+      PDF_BUCKET_DOMAIN         = aws_s3_bucket.pdf_bucket.bucket_regional_domain_name
     }
   }
 }
@@ -143,7 +150,7 @@ resource "aws_apigatewayv2_integration" "html_to_pdf" {
   integration_method = "POST"
 
 
-  connection_type    = "INTERNET"
+  connection_type = "INTERNET"
 }
 
 resource "aws_apigatewayv2_route" "html_to_pdf" {
